@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:AHGroceries.ViewModels"
+             xmlns:models="clr-namespace:AHGroceries.Models"
+             x:Class="AHGroceries.MainPage"
+             x:Name="mainPage"
+              Title="Andrew &amp; Heather’s Groceries"
+              BackgroundColor="{StaticResource PacersGold}">
+
+    <ContentPage.BindingContext>
+        <vm:MainViewModel />
+    </ContentPage.BindingContext>
+
+    <Grid RowDefinitions="Auto, *" Padding="16" RowSpacing="12">
+
+        <!-- Top Input Bar with Qty Entry -->
+        <Border Grid.Row="0" Padding="12" BackgroundColor="{StaticResource Cream}" Stroke="{StaticResource RoyalBlue}" StrokeShape="RoundRectangle 8">
+            <Grid ColumnDefinitions="*, 60, Auto, Auto" ColumnSpacing="8">
+            <Entry Grid.Column="0"
+                   Placeholder="Add item (e.g., Milk)..." 
+                   Text="{Binding NewItemName}" 
+                   TextColor="{StaticResource RoyalBlue}"
+                   PlaceholderColor="{StaticResource RoyalBlue}"
+                   ReturnCommand="{Binding AddItemCommand}" />
+            <Entry Grid.Column="1"
+                   Placeholder="Qty" 
+                   Keyboard="Numeric"
+                   HorizontalTextAlignment="Center"
+                   Text="{Binding NewItemQuantity}" 
+                   TextColor="{StaticResource RoyalBlue}"
+                   PlaceholderColor="{StaticResource RoyalBlue}"
+                   ReturnCommand="{Binding AddItemCommand}" />
+            <Button Grid.Column="2"
+                    Text="Add" 
+                    BackgroundColor="{StaticResource Cream}"
+                    TextColor="{StaticResource RoyalBlue}"
+                    Command="{Binding AddItemCommand}" />
+            <Button Grid.Column="3"
+                    Text="Refresh"
+                    BackgroundColor="{StaticResource Scarlet}"
+                    TextColor="{StaticResource White}"
+                    Command="{Binding RefreshListCommand}" />
+            </Grid>
+        </Border>
+
+        <!-- Grocery Items List -->
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Items}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:GroceryItem">
+                    <SwipeView>
+                        <SwipeView.RightItems>
+                            <SwipeItems>
+                                <SwipeItem Text="Delete" 
+                                           BackgroundColor="Red" 
+                                           Command="{Binding Source={x:Reference mainPage}, Path=BindingContext.DeleteItemCommand}" 
+                                           CommandParameter="{Binding .}" />
+                            </SwipeItems>
+                        </SwipeView.RightItems>
+
+                        <Border Padding="12,8" Margin="0,4" StrokeShape="RoundRectangle 8" Stroke="#D0D0D0" BackgroundColor="{StaticResource RoyalBlue}">
+                            <Border.GestureRecognizers>
+                                <DragGestureRecognizer DragStarting="OnDragStarting" />
+                                <DropGestureRecognizer AllowDrop="True" Drop="OnDrop" />
+                            </Border.GestureRecognizers>
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding IsPurchased}" Value="True">
+                                    <Setter Property="BackgroundColor" Value="{StaticResource RoyalBlue}" />
+                                </DataTrigger>
+                            </Border.Triggers>
+                            <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10">
+
+                                <CheckBox Grid.Column="0" IsChecked="{Binding IsPurchased}" Color="{StaticResource White}" VerticalOptions="Center" />
+
+                                <Label Grid.Column="1" 
+                                       Text="{Binding Name}" 
+                                       VerticalOptions="Center" 
+                                       FontSize="16"
+                                       TextColor="{StaticResource White}">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{Binding IsPurchased}" Value="True">
+                                            <Setter Property="TextDecorations" Value="Strikethrough" />
+                                            <Setter Property="TextColor" Value="{StaticResource White}" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+
+                                <!-- Quantity Stepper Controls -->
+                                <HorizontalStackLayout Grid.Column="2" Spacing="4" VerticalOptions="Center">
+                                    <Button Text="↑" WidthRequest="32" HeightRequest="32" Padding="0"
+                                            Command="{Binding Source={x:Reference mainPage}, Path=BindingContext.MoveItemUpCommand}"
+                                            CommandParameter="{Binding .}" />
+                                    <Button Text="↓" WidthRequest="32" HeightRequest="32" Padding="0"
+                                            Command="{Binding Source={x:Reference mainPage}, Path=BindingContext.MoveItemDownCommand}"
+                                            CommandParameter="{Binding .}" />
+                                    <Button Text="−" 
+                                            WidthRequest="32" 
+                                            HeightRequest="32" 
+                                            Padding="0" 
+                                            FontSize="16"
+                                            BackgroundColor="{StaticResource Scarlet}"
+                                            TextColor="{StaticResource White}"
+                                             Command="{Binding Source={x:Reference mainPage}, Path=BindingContext.DecreaseQuantityCommand}"
+                                            CommandParameter="{Binding .}" />
+
+                                    <Label Text="{Binding Quantity}" 
+                                           VerticalOptions="Center" 
+                                           HorizontalOptions="Center"
+                                           WidthRequest="28"
+                                           HorizontalTextAlignment="Center"
+                                           FontAttributes="Bold"
+                                            FontSize="15"
+                                            TextColor="{StaticResource White}" />
+
+                                    <Button Text="+" 
+                                            WidthRequest="32" 
+                                            HeightRequest="32" 
+                                            Padding="0" 
+                                            FontSize="16"
+                                            BackgroundColor="{StaticResource Scarlet}"
+                                            TextColor="{StaticResource White}"
+                                             Command="{Binding Source={x:Reference mainPage}, Path=BindingContext.IncreaseQuantityCommand}"
+                                            CommandParameter="{Binding .}" />
+                                </HorizontalStackLayout>
+                            </Grid>
+                        </Border>
+                    </SwipeView>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

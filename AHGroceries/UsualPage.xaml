@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:AHGroceries.ViewModels"
+             x:Class="AHGroceries.UsualPage"
+             x:Name="UsualItemsPage"
+             Title="Usual Items"
+             BackgroundColor="{StaticResource PacersGold}">
+
+    <ContentPage.BindingContext>
+        <vm:UsualViewModel />
+    </ContentPage.BindingContext>
+
+    <Grid RowDefinitions="Auto, *" Padding="16" RowSpacing="12">
+        <!-- Add New Usual Item Bar -->
+        <Border Grid.Row="0" Padding="12" BackgroundColor="{StaticResource Cream}" Stroke="{StaticResource RoyalBlue}" StrokeShape="RoundRectangle 8">
+            <Grid ColumnDefinitions="*, Auto, Auto" ColumnSpacing="10">
+            <Entry Grid.Column="0"
+                   Placeholder="Add frequent item (e.g., Eggs, Coffee)..." 
+                   Text="{Binding NewFavoriteName}" 
+                   TextColor="{StaticResource RoyalBlue}"
+                   PlaceholderColor="{StaticResource RoyalBlue}"
+                   ReturnCommand="{Binding AddFavoriteCommand}" />
+            <Button Grid.Column="1" 
+                    Text="Save" 
+                    BackgroundColor="{StaticResource Cream}"
+                    TextColor="{StaticResource RoyalBlue}"
+                    Command="{Binding AddFavoriteCommand}" />
+            <Button Grid.Column="2"
+                    Text="Reset"
+                    BackgroundColor="{StaticResource Cream}"
+                    TextColor="{StaticResource RoyalBlue}"
+                    Command="{Binding ResetHiddenCommand}" />
+            </Grid>
+        </Border>
+
+        <!-- List of Usual Items with Quick-Add Buttons -->
+        <CollectionView Grid.Row="1" ItemsSource="{Binding UsualItems}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <SwipeView>
+                        <SwipeView.RightItems>
+                            <SwipeItems>
+                                <SwipeItem Text="Delete" 
+                                           BackgroundColor="Red" 
+                                           Command="{Binding Source={x:Reference UsualItemsPage}, Path=BindingContext.DeleteFavoriteCommand}" 
+                                           CommandParameter="{Binding .}" />
+                            </SwipeItems>
+                        </SwipeView.RightItems>
+
+                        <Border Padding="14,10" Margin="0,4" StrokeShape="RoundRectangle 8" Stroke="#D0D0D0" BackgroundColor="{StaticResource RoyalBlue}">
+                            <Grid ColumnDefinitions="*, Auto, Auto, Auto" ColumnSpacing="6">
+                                <Label Grid.Column="0" 
+                                       Text="{Binding Name}" 
+                                       VerticalOptions="Center" 
+                                       FontSize="16" 
+                                       FontAttributes="Bold"
+                                       TextColor="{StaticResource White}" />
+
+                                <Button Grid.Column="1"
+                                        Text="Skip"
+                                        Padding="10,0"
+                                         HeightRequest="36"
+                                         BackgroundColor="{StaticResource Scarlet}"
+                                         TextColor="{StaticResource White}"
+                                        Command="{Binding Source={x:Reference UsualItemsPage}, Path=BindingContext.SkipFavoriteCommand}"
+                                        CommandParameter="{Binding .}" />
+
+                                <Button Grid.Column="2"
+                                        Text="Hide"
+                                        Padding="10,0"
+                                         HeightRequest="36"
+                                         BackgroundColor="{StaticResource DarkGray}"
+                                         TextColor="{StaticResource White}"
+                                        Command="{Binding Source={x:Reference UsualItemsPage}, Path=BindingContext.HideFavoriteCommand}"
+                                        CommandParameter="{Binding .}" />
+
+                                <Button Grid.Column="3"
+                                        Text="+ Add to List" 
+                                        FontSize="13" 
+                                        Padding="12,0" 
+                                        HeightRequest="36" 
+                                        BackgroundColor="#2E7D32" 
+                                        TextColor="White" 
+                                        Command="{Binding Source={x:Reference UsualItemsPage}, Path=BindingContext.PushToListCommand}" 
+                                        CommandParameter="{Binding .}">
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroupList>
+                                            <VisualStateGroup x:Name="CommonStates">
+                                                <VisualState x:Name="Normal">
+                                                    <VisualState.Setters>
+                                                        <Setter Property="BackgroundColor" Value="#2E7D32" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState x:Name="Pressed">
+                                                    <VisualState.Setters>
+                                                        <Setter Property="BackgroundColor" Value="#1B5E20" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                            </VisualStateGroup>
+                                        </VisualStateGroupList>
+                                    </VisualStateManager.VisualStateGroups>
+                                </Button>
+                            </Grid>
+                        </Border>
+                    </SwipeView>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>
