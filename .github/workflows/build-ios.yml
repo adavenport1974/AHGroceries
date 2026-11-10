@@ -23,7 +23,7 @@ jobs:
 
     - name: Build and Package Native IPA
       run: |
-        dotnet publish -f net10.0-ios -c Release -r ios-arm64 /p:ArchiveOnBuild=true /p:BuildIpa=true /p:TargetFrameworks=net10.0-ios /p:_IgnoreXcodeVersionCheck=true
+        dotnet publish -f net10.0-ios -c Release -r ios-arm64 /p:ArchiveOnBuild=true /p:BuildIpa=true /p:TargetFrameworks=net10.0-ios /p:ValidateXcodeVersion=false
 
     - name: Upload IPA Artifact
       uses: actions/upload-artifact@v4
