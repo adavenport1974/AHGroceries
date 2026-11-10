@@ -21,12 +21,9 @@ jobs:
     - name: Install .NET MAUI iOS Workload
       run: dotnet workload install maui-ios
 
-    - name: Restore Project Workloads
-      run: dotnet workload restore
-
     - name: Build and Package Native IPA
       run: |
-        dotnet publish -f net10.0-ios -c Release -r ios-arm64 /p:ArchiveOnBuild=true /p:BuildIpa=true /p:TargetFrameworks=net10.0-ios
+        dotnet publish -f net10.0-ios -c Release -r ios-arm64 /p:ArchiveOnBuild=true /p:BuildIpa=true /p:TargetFrameworks=net10.0-ios /p:_IgnoreXcodeVersionCheck=true
 
     - name: Upload IPA Artifact
       uses: actions/upload-artifact@v4
