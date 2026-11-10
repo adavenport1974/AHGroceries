@@ -1,0 +1,32 @@
+﻿name: Build iOS IPA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    runs-on: macos-14
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.x'
+
+    - name: Install .NET MAUI iOS Workload
+      run: dotnet workload install maui-ios
+
+    - name: Build and Package Native IPA
+      run: |
+        dotnet publish -f net10.0-ios -c Release -r ios-arm64 /p:ArchiveOnBuild=true /p:BuildIpa=true
+
+    - name: Upload IPA Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: AHGroceries-IPA
+        path: "**/bin/Release/net10.0-ios/ios-arm64/publish/*.ipa"

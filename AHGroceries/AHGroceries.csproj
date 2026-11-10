@@ -88,4 +88,8 @@
 	  </MauiXaml>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Include=".github\workflows\build-ios.yml" />
+	</ItemGroup>
+
 </Project>
