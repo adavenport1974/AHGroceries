@@ -21,12 +21,22 @@ jobs:
     - name: Install .NET MAUI iOS Workload
       run: dotnet workload install maui-ios
 
-    - name: Build and Package Native IPA
+    - name: Build Native App Bundle (Unsigned)
       run: |
-        dotnet publish -f net10.0-ios -c Release -r ios-arm64 /p:ArchiveOnBuild=true /p:BuildIpa=true /p:TargetFrameworks=net10.0-ios /p:ValidateXcodeVersion=false
+        dotnet publish -f net10.0-ios -c Release -r ios-arm64 /p:TargetFrameworks=net10.0-ios /p:ValidateXcodeVersion=false /p:EnableCodeSigning=false
+
+    - name: Package Native IPA
+      run: |
+        APP_PATH=$(find . -type d -name "AHGroceries.app" | grep "ios-arm64" | head -n 1)
+        echo "Found App Bundle at: $APP_PATH"
+        mkdir -p build_output/Payload
+        cp -R "$APP_PATH" build_output/Payload/
+        cd build_output
+        zip -r AHGroceries.ipa Payload
+        echo "Packaged IPA successfully."
 
     - name: Upload IPA Artifact
       uses: actions/upload-artifact@v4
       with:
         name: AHGroceries-IPA
-        path: "**/bin/Release/net10.0-ios/ios-arm64/publish/*.ipa"
+        path: build_output/AHGroceries.ipa
