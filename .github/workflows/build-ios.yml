@@ -16,17 +16,21 @@ jobs:
     - name: Select Working Xcode Version
       run: |
         echo "Available Xcode installations:"
-        ls -d /Applications/Xcode*.app
+        ls -ld /Applications/Xcode*
         WORKING_XCODE=""
-        for x in $(ls -d /Applications/Xcode*.app | sort -V); do
-          if [ -d "$x/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk" ]; then
+        for x in $(ls -d /Applications/Xcode_*.app | grep -v "26.3" | sort -V); do
+          sudo xcode-select -s "$x"
+          if xcrun --find actool >/dev/null 2>&1 && xcrun --sdk iphoneos --show-sdk-path >/dev/null 2>&1; then
             WORKING_XCODE="$x"
           fi
         done
-        echo "Selecting working Xcode: $WORKING_XCODE"
+        if [ -z "$WORKING_XCODE" ]; then
+          echo "No working Xcode found!"
+          exit 1
+        fi
+        echo "Final selected Xcode: $WORKING_XCODE"
         sudo xcode-select -s "$WORKING_XCODE"
         xcodebuild -version
-        xcrun --find actool
 
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@v4
