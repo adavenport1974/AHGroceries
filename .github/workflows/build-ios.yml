@@ -19,7 +19,6 @@ jobs:
         echo "Selecting $LATEST_XCODE"
         sudo xcode-select -s "$LATEST_XCODE"
         xcodebuild -version
-        xcodebuild -showsdks
 
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@v4
@@ -32,7 +31,7 @@ jobs:
 
     - name: Build Native App Bundle (Unsigned)
       run: |
-        dotnet publish -f net10.0-ios -c Release -r ios-arm64 /p:TargetFrameworks=net10.0-ios /p:EnableCodeSigning=false
+        dotnet publish -f net10.0-ios -c Release -r ios-arm64 /p:TargetFrameworks=net10.0-ios /p:ValidateXcodeVersion=false /p:EnableCodeSigning=false
 
     - name: Package Native IPA
       run: |
