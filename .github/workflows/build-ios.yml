@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-26
+    runs-on: macos-15
 
     steps:
     - name: Checkout Code
@@ -15,24 +15,24 @@ jobs:
 
     - name: Select Latest Xcode Version
       run: |
-        echo "Available Xcode installations:"
-        ls -d /Applications/Xcode*
         LATEST_XCODE=$(ls -d /Applications/Xcode*.app | sort -V | tail -n 1)
         echo "Selecting $LATEST_XCODE"
         sudo xcode-select -s "$LATEST_XCODE"
         xcodebuild -version
+        xcodebuild -showsdks
 
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '10.0.x'
+        dotnet-version: '10.0.100'
 
-    - name: Install .NET MAUI iOS Workload
-      run: dotnet workload install maui-ios
+    - name: Install Matching .NET MAUI iOS Workload
+      run: |
+        dotnet workload install maui-ios --version 10.0.100
 
     - name: Build Native App Bundle (Unsigned)
       run: |
-        dotnet publish -f net10.0-ios -c Release -r ios-arm64 /p:TargetFrameworks=net10.0-ios /p:ValidateXcodeVersion=false /p:EnableCodeSigning=false
+        dotnet publish -f net10.0-ios -c Release -r ios-arm64 /p:TargetFrameworks=net10.0-ios /p:EnableCodeSigning=false
 
     - name: Package Native IPA
       run: |
